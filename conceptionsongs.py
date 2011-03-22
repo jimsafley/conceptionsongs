@@ -13,6 +13,12 @@ parser.add_argument('date', help='a date in ISO 8601 format, "YYYY-MM-DD"')
 parser.add_argument('apikey', help='your Billboard developer API key')
 parser.add_argument('-n', '--number', type=int, help='number of songs to return')
 parser.add_argument('-f', '--format', choices=['json', 'text'], default='text', help='output format')
+group = parser.add_mutually_exclusive_group()
+# The Billboard Hot 100 (singles)
+group.add_argument('--singles', action='store_const', const=379, default=379, dest='chart')
+# The Billboard 200 (albums)
+group.add_argument('--albums', action='store_const', const=305, dest='chart')
+
 args = parser.parse_args()
 
 # Validate against ISO 8601.
@@ -52,9 +58,7 @@ while True:
     
     # Set the parameters.
     params = urllib.urlencode({'format': 'json', 
-                               # The Billboard Hot 100 - Singles
-                               'id': 379,
-                               # Application key
+                               'id': args.chart,
                                'api_key': args.apikey,
                                'sdate': startDate, 
                                'edate': endDate, 
